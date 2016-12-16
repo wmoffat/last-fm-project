@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Home | LastFM Project</title>
 </head>
-<body>
 
 <!--skeleton css-->
 <link href="css/skeleton.css" type="text/css" rel="stylesheet"/>
@@ -12,6 +11,92 @@
 
 <!--master styles-->
 <link href="css/styles.css" type="text/css" rel="stylesheet"/>
+
+<!--jquery cdn-->
+<script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous">
+</script>
+
+<body>
+
+<div class="container">
+
+	<h1 style="text-align:center; font-size:5.0rem;">LastFM User Insights</h1>
+
+	<p style="text-align: center;">Enter your LastFM username and select the amount of recent tracks you would like to view.</p>
+
+	<!--form-->
+	<div class="row">
+		<div class="two columns">&nbsp;</div>
+		<div class="eight columns">
+			<input type="text" placeholder="Enter your LastFM username" id="usernameInput" style="width:65%">
+			<button type="submit" class="button-primary" onClick="processUser();" id="username-button" value="Submit">Submit</button>
+		</div>
+		<div class="two columns">&nbsp;</div>
+	</div>
+
+	<div class="row" style="margin-top:10px;">
+		<div class="two columns">&nbsp;</div>
+		<div class="eight columns">
+			<form>
+				<span>Tracks: </span>
+				<select name="track-amount" id="track-amount">
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="30">30</option>
+					<option value="40">40</option>
+					<option value="50">50</option>
+				</select>
+			</form>
+		</div>
+		<div class="two columns">&nbsp;</div>
+	</div>
+
+	<div class="row">
+		<div class="two columns">&nbsp;</div>
+		<div class="eight columns">
+			<ol id="tracks"></ol>	
+		</div>
+		<div class="two columns">&nbsp;</div>
+	</div>
+
+</div>
+<script>
+
+//my last fm api key
+//this allows for me to gather the last fm api methods
+//needs to be chained in gathering urls
+var api_key = '7654440140861f790c50ea93d9db5b98';
+
+//my personal lastfm username for testing and gathering
+var my_username = 'maxwellmoffat';
+
+//on click event to place username variable into base url
+function processUser(){
+	var username = document.getElementById('usernameInput').value;
+	var limit = document.getElementById('track-amount').value;
+
+	$("#username-display").html('');
+
+	$(function(){
+
+		var user_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user='+username+'&api_key='+api_key+'&limit='+limit+'&format=json';
+		$.getJSON(user_url, function(data){
+
+			console.log(data.recenttracks.track);
+
+			$.each(data.recenttracks.track, function(key, val){
+				$('#tracks').append($('<li>').html(''+val.name+' - '+val.artist["#text"]+''));
+			});    
+
+		});
+	});
+
+};
+	
+</script>
 
 </body>
 </html>
