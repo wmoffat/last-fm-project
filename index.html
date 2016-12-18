@@ -21,48 +21,64 @@
 
 <body>
 
-<div class="container">
+<div class="container">		<!--beginning of container-->
 
-	<h1 style="text-align:center; font-size:5.0rem;">LastFM User Insights</h1>
+	<h1 style="text-align:center; font-size:4.0rem;">LastFM User Insights</h1>
+	<p>Enter your LastFM username and select the time period to gather different insights on your music listening habits.</p>
 
-	<p style="text-align: center;">Enter your LastFM username and select the amount of recent tracks you would like to view.</p>
-
-	<!--form-->
 	<div class="row">
-		<div class="two columns">&nbsp;</div>
-		<div class="eight columns">
-			<input type="text" placeholder="Enter your LastFM username" id="usernameInput" style="width:65%">
-			<button type="submit" class="button-primary" onClick="processUser();" id="username-button" value="Submit">Submit</button>
+		<div class="six columns">
+			<label for="username-input">LastFM Username: </label>
+			<input class="u-full-width" type="text" placeholder="Your LastFM Username" id="username-input">
 		</div>
-		<div class="two columns">&nbsp;</div>
+		<div class="six columns">&nbsp;</div>
 	</div>
 
 	<div class="row" style="margin-top:10px;">
-		<div class="two columns">&nbsp;</div>
-		<div class="eight columns">
-			<form>
-				<span>Tracks: </span>
-				<select name="track-amount" id="track-amount">
-					<option value="10">10</option>
-					<option value="20">20</option>
-					<option value="30">30</option>
-					<option value="40">40</option>
-					<option value="50">50</option>
-				</select>
-			</form>
+		<div class="three columns">
+			<label for="period">Time Period: </label>
+			<select name="period" id="period">
+				<option value="overall">Overall</option>
+				<option value="7day">7 Days</option>
+				<option value="1month">1 Months</option>
+				<option value="3month">3 Months</option>
+				<option value="6month">6 Months</option>
+				<option value="12month">12 Months</option>
+			</select>
 		</div>
-		<div class="two columns">&nbsp;</div>
+		<div class="three columns">
+			<label for="">Display Count: </label>
+			<select name="display-count" id="display-count">
+				<option value="10">10</option>
+				<option value="20">20</option>
+				<option value="30">30</option>
+				<option value="40">40</option>
+				<option value="50">50</option>
+			</select>
+		</div>
+		<div class="six columns">&nbsp;</div>
 	</div>
 
-	<div class="row">
-		<div class="two columns">&nbsp;</div>
-		<div class="eight columns">
-			<ol id="tracks"></ol>	
-		</div>
-		<div class="two columns">&nbsp;</div>
+	<div class="row" style="margin-top:25px;">
+		<div class="six columns">
+			<input class="button-primary" type="submit" value="Submit" onClick="processUser();">
+		</div>	
+		<div class="six columns">&nbsp;</div>
 	</div>
 
-</div>
+	<div class="row" style="margin-top:20px;">
+		<div class="six columns">
+			<ol id="results"></ol>
+		</div>
+		<div class="six columns">
+			<div id="album-artwork"></div>
+		</div>
+	</div>
+
+<ul id="tester" style="list-style-type:none;"></ul>
+
+
+</div>		<!--end of container-->
 <script>
 
 //my last fm api key
@@ -75,26 +91,31 @@ var my_username = 'maxwellmoffat';
 
 //on click event to place username variable into base url
 function processUser(){
-	var username = document.getElementById('usernameInput').value;
-	var limit = document.getElementById('track-amount').value;
 
-	$("#username-display").html('');
+	$('#results').html('');
+
+	var username = document.getElementById('username-input').value;
+	var limit = document.getElementById('display-count').value;
+	var period = document.getElementById('period').value;
 
 	$(function(){
 
-		var user_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user='+username+'&api_key='+api_key+'&limit='+limit+'&format=json';
+		var user_url = 'http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user='+username+'&period='+period+'&api_key='+api_key+'&limit='+limit+'&format=json';
 		$.getJSON(user_url, function(data){
 
-			console.log(data.recenttracks.track);
+			console.log(data.topalbums.album);
 
-			$.each(data.recenttracks.track, function(key, val){
-				$('#tracks').append($('<li>').html(''+val.name+' - '+val.artist["#text"]+''));
+			$.each(data.topalbums.album, function(key, val){
+				$('#results').append($('<li style="border-bottom:1px solid #333;">').html(''+val.name+' - '+val.artist['name']+'<br/><img src='+val.image[2]["#text"]+'/>'));
 			});    
 
 		});
 	});
 
 };
+
+
+
 	
 </script>
 
